@@ -4,21 +4,14 @@
 
 ## 🧠 Team Name & Member
 
-**Team Name**: Mnitian\_Coder
+**Team Name**: Mnitian\_Coder  
 **Team Member**: Govind Ram Mali
 
 ---
 
 ## 🎯 Problem Statement / Objective
 
-Build an app that can compare faces across two or more images and identify which faces match and which are different.
-The system should:
-
-* Detect faces in each image.
-* Compare facial features using deep learning.
-* Assign unique IDs to individuals.
-* Highlight duplicates or unique individuals across all photos.
-* Generate annotated images and a downloadable match report.
+Build an app that can compare faces across three or more images and identify which faces match and which ones are different. You’ll design a tool that detects faces, analyzes them, and highlights duplicates or unique individuals between photos
 
 ---
 
