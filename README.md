@@ -1,115 +1,139 @@
-Face Comparison Web App
-This is a Flask-based face comparison tool powered by DeepFace that allows users to upload multiple images, automatically detect faces, compare them, assign unique IDs to matched faces, and visualize results with annotated images and a downloadable match report.
+# Face Comparison Web App
 
-Team Details
-Developer: Govind Ram Mali
+---
 
-Problem Statement
-Build an app that can compare faces across two or more images and tell which faces match and which ones are different. You'll design a tool that detects faces, analyzes them, and highlights duplicates or unique individuals between photos.
+## 🧠 Team Name & Member
 
-Features
-Upload 2 or more images
+**Team Name**: Mnitian\_Coder
+**Team Member**: Govind Ram Mali
 
-Detect all faces in each image
+---
 
-Assign unique IDs to matched faces
+## 🎯 Problem Statement / Objective
 
-Compare using Facenet + Cosine similarity
+Build an app that can compare faces across two or more images and identify which faces match and which are different.
+The system should:
 
-Visual output with bounding boxes and IDs
+* Detect faces in each image.
+* Compare facial features using deep learning.
+* Assign unique IDs to individuals.
+* Highlight duplicates or unique individuals across all photos.
+* Generate annotated images and a downloadable match report.
 
-Tabular match report with matching scores
+---
 
-Downloadable CSV match report
+## 🛠 Tools & Technologies Used
 
-Tech Stack
-Layer	Technologies Used
-Backend	Python, Flask, DeepFace, OpenCV
-Frontend	React.js, HTML, CSS, JavaScript
-Tunneling	pyngrok
-Matching	Facenet (DeepFace), Cosine Distance
-Data	pandas, CSV
+| Category      | Tools & Libraries                     |
+| ------------- | ------------------------------------- |
+| Backend       | Python, Flask, DeepFace, OpenCV       |
+| Frontend      | React.js, HTML, CSS, JavaScript       |
+| Tunneling     | pyngrok                               |
+| Face Matching | Facenet (DeepFace), Cosine Similarity |
+| Data Format   | pandas, CSV                           |
+| Environment   | Python 3.8+, VS Code                  |
 
-How to Run the Project Locally
-Step 1: Clone the Repository
-bash
-Copy
-Edit
-git clone https://github.com/Govind-2002/Face_matcher.git
-cd Face_matcher
-Step 2: Install Dependencies
-Make sure Python ≥ 3.8 is installed.
+---
 
-bash
-Copy
-Edit
+## 🚀 How to Run the Project
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/face-comparison-app.git
+cd face-comparison-app
+```
+
+### 2. Install Python Dependencies
+
+Ensure Python 3.8 or above is installed.
+
+```bash
 pip install -r requirements.txt
-Also install pyngrok if not already:
-
-bash
-Copy
-Edit
 pip install pyngrok
-Step 3: Launch the Backend
-Run the Flask app:
+```
 
-bash
-Copy
-Edit
+### 3. Run the Flask Server
+
+```bash
 python app.py
-You’ll see something like:
+```
 
-arduino
-Copy
-Edit
+This will start a local Flask server and expose it using ngrok.
+You'll see something like:
+
+```
  * ngrok tunnel available at: http://abcd1234.ngrok.io
-Step 4: Update the Frontend API URL
-Each time you run python app.py, you must copy the new ngrok link and update the following line in index.html:
+```
 
-js
-Copy
-Edit
-const API_URL = "http://abcd1234.ngrok.io/compare";
-Step 5: Launch the Frontend
-Option 1: Use VS Code Live Server Extension → Right-click index.html → "Go Live"
+### 4. Update Frontend API URL
 
-Option 2: Open index.html manually in your browser
+Open your frontend `index.html` or React component and **replace the existing API URL** with the new one from ngrok:
 
-Step 6: Use the App
-Select 2 or more face images
+```javascript
+const API_URL = "http://abcd1234.ngrok.io/compare";  // Use your actual tunnel URL
+```
 
-Click "Compare"
+Do this each time you rerun `python app.py`.
 
-View results:
+### 5. Launch the Frontend
 
-Annotated images with face IDs
+If using React:
 
-Match report table
+```bash
+npm install
+npm start
+```
 
-Option to Download CSV
+Or if using static HTML:
 
-Project Structure
-bash
-Copy
-Edit
-├── app.py                # Flask backend with DeepFace face comparison
-├── index.html            # Frontend (React entry or HTML fallback)
+* Open `index.html` in your browser, or
+* Use VS Code Live Server Extension.
+
+### 6. Use the App
+
+* Upload 2 or more images with faces.
+* Click **"Compare"**.
+* View:
+
+  * Annotated images with face IDs (e.g., "image1 - ID: 3").
+  * A tabular match report showing which face in one image matches a face in another. Example:
+
+    * *image1 - ID: 3* matched with *image2 - ID: 2* → **Match: Yes**
+    * *image1 - ID: 1* has no match in image2 → **Match: No**
+  * Downloadable CSV report including match details.
+
+---
+
+## 🖼 Screenshots
+
+### 🔍 Annotated Face Detection Output
+
+*(Add your image here)*
+
+### 📊 CSV Report Preview
+
+| Face ID (Image) | Matched With (Image) | Distance | Match |
+| --------------- | -------------------- | -------- | ----- |
+| 3 (Image 1)     | 2 (Image 2)          | 0.34     | Yes   |
+| 1 (Image 1)     | —                    | —        | No    |
+
+---
+
+## 📂 Project Structure
+
+```
+├── app.py                # Flask backend
+├── index.html / React    # Frontend UI
 ├── requirements.txt      # Python dependencies
-├── face_compare.ipynb    # (Optional) Notebook version of the app
+├── face_compare.ipynb    # Optional notebook
+├── screenshots/          # For storing screenshot images
 └── README.md             # Project documentation
-Sample Output
-Annotated Image with IDs
-Each detected face is marked with a bounding box and a unique ID.
+```
 
-Match Report (CSV)
-mathematica
-Copy
-Edit
-Face ID (Image)   Matched With (Image)   Distance   Match
-1 (Image 1)       1 (Image 2)            0.34       Yes
-2 (Image 1)       —                      —          No
+---
 
-(Place your actual CSV screenshot image inside a screenshots/ folder in the repo)
+## 📄 License
 
-License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the **MIT License**.
+See the [LICENSE](./LICENSE) file for more information.
