@@ -101,6 +101,8 @@ Or if using static HTML:
 
 ## 🖼 Screenshots
 ![Face Comparison Output](screenshot/sc1.png)
+![Face Comparison Output](screenshot/sc2.png)
+
 
 ### 🔍 Annotated Face Detection Output
 
