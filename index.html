@@ -1,167 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Face Match Comparison Tool</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
-    body {
-      background: #f1f3f5;
-      padding: 30px;
-      font-family: 'Segoe UI', sans-serif;
-    }
-    .container {
-      max-width: 960px;
-    }
-    .img-preview {
-      max-height: 250px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      object-fit: contain;
-    }
-    .spinner-border {
-      width: 3rem;
-      height: 3rem;
-    }
-    .table-responsive {
-      max-height: 400px;
-      overflow-y: auto;
-    }
-  </style>
-</head>
-<body>
-  <div class="container bg-white p-5 rounded shadow">
-    <h2 class="mb-4 text-center text-primary">Face Match Comparison Tool</h2>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Face Match Comparison Tool</title>
 
-    <form id="uploadForm" class="mb-4">
-      <div class="mb-3">
-        <label for="images" class="form-label fw-semibold">Upload Images (min 2)</label>
-        <input class="form-control" type="file" id="images" name="images" multiple accept="image/*" required />
-      </div>
-      <button type="submit" class="btn btn-primary" id="submitBtn">Compare Faces</button>
-    </form>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Noto+Sans:wght@400;500;700;900&display=swap"
+    />
 
-    <div id="loading" class="text-center my-4 d-none">
-      <div class="spinner-border text-primary" role="status"></div>
-      <p class="mt-2">Processing images, please wait...</p>
-    </div>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
-    <div id="results" class="d-none">
-      <h4 class="mt-4">Annotated Images</h4>
-      <div id="annotatedImages" class="d-flex flex-wrap gap-3 mb-4 justify-content-center"></div>
-
-      <h4>Match Report</h4>
-      <div class="table-responsive mb-3">
-        <table class="table table-bordered table-hover align-middle" id="matchReportTable">
-          <thead class="table-dark">
-            <tr>
-              <th>Face ID (Image)</th>
-              <th>Matched With (Image)</th>
-              <th>Distance</th>
-              <th>Match</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-
-      <button id="downloadCSV" class="btn btn-outline-secondary">Download CSV Report</button>
-    </div>
-
-    <div id="errorMsg" class="alert alert-danger d-none mt-3" role="alert"></div>
-  </div>
-
-  <script>
-    const API_URL = 'https://de20-35-239-55-226.ngrok-free.app'; // <- Update as needed
-
-    const form = document.getElementById('uploadForm');
-    const imagesInput = document.getElementById('images');
-    const resultsDiv = document.getElementById('results');
-    const loadingDiv = document.getElementById('loading');
-    const annotatedImagesDiv = document.getElementById('annotatedImages');
-    const matchReportTableBody = document.querySelector('#matchReportTable tbody');
-    const downloadCSVBtn = document.getElementById('downloadCSV');
-    const errorMsgDiv = document.getElementById('errorMsg');
-    const submitBtn = document.getElementById('submitBtn');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      errorMsgDiv.classList.add('d-none');
-      resultsDiv.classList.add('d-none');
-      annotatedImagesDiv.innerHTML = '';
-      matchReportTableBody.innerHTML = '';
-
-      if (imagesInput.files.length < 2) {
-        errorMsgDiv.textContent = 'Please upload at least two images.';
-        errorMsgDiv.classList.remove('d-none');
-        return;
+    <style>
+      body {
+        font-family: 'Inter', 'Noto Sans', sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 40px 15px;
+        color: #1e1e1e;
       }
 
-      submitBtn.disabled = true;
-      loadingDiv.classList.remove('d-none');
-
-      const formData = new FormData();
-      for (const file of imagesInput.files) {
-        formData.append('images', file);
+      .container {
+        max-width: 960px;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 40px 30px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        border: 1px solid #dee2e6;
       }
 
-      try {
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          body: formData
-        });
+      h2 {
+        font-weight: 700;
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 30px;
+      }
 
-        if (!response.ok) {
-          throw new Error('Server error: ' + response.statusText);
+      .form-label {
+        font-weight: 500;
+      }
+
+      .img-preview {
+        max-height: 250px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        object-fit: cover;
+      }
+
+      .table thead {
+        background-color: #2c3e50;
+        color: white;
+      }
+
+      .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f6f9fc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2 style="font-size: 2.5rem; font-family: 'Poppins', sans-serif; color: #2c3e50;">Face Match Comparison Tool</h2>
+
+      <form id="uploadForm" class="mb-4">
+        <div class="mb-3">
+          <label for="images" class="form-label">Upload Images (min 2)</label>
+          <input class="form-control" type="file" id="images" name="images" multiple accept="image/*" required />
+        </div>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Compare Faces</button>
+      </form>
+
+      <div id="loading" class="text-center my-4 d-none">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">Processing images, please wait...</p>
+      </div>
+
+      <div id="results" class="d-none">
+        <h4 class="mt-4 fw-semibold">Annotated Images</h4>
+        <div id="annotatedImages" class="d-flex flex-wrap gap-3 mb-4 justify-content-center"></div>
+
+        <h4 class="fw-semibold">Match Report</h4>
+        <div class="table-responsive mb-3">
+          <table class="table table-striped table-bordered align-middle" id="matchReportTable">
+            <thead>
+              <tr>
+                <th>Face ID (Image)</th>
+                <th>Matched With (Image)</th>
+                <th>Match</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <button id="downloadCSV" class="btn btn-outline-secondary">Download CSV Report</button>
+      </div>
+
+      <div id="errorMsg" class="alert alert-danger d-none mt-3" role="alert"></div>
+    </div>
+
+    <script>
+      const API_URL = 'https://cfbe-35-221-254-126.ngrok-free.app/compare';
+
+      const form = document.getElementById('uploadForm');
+      const imagesInput = document.getElementById('images');
+      const resultsDiv = document.getElementById('results');
+      const loadingDiv = document.getElementById('loading');
+      const annotatedImagesDiv = document.getElementById('annotatedImages');
+      const matchReportTableBody = document.querySelector('#matchReportTable tbody');
+      const downloadCSVBtn = document.getElementById('downloadCSV');
+      const errorMsgDiv = document.getElementById('errorMsg');
+      const submitBtn = document.getElementById('submitBtn');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        errorMsgDiv.classList.add('d-none');
+        resultsDiv.classList.add('d-none');
+        annotatedImagesDiv.innerHTML = '';
+        matchReportTableBody.innerHTML = '';
+
+        if (imagesInput.files.length < 2) {
+          errorMsgDiv.textContent = 'Please upload at least two images.';
+          errorMsgDiv.classList.remove('d-none');
+          return;
         }
 
-        const data = await response.json();
+        submitBtn.disabled = true;
+        loadingDiv.classList.remove('d-none');
 
-        // Annotated images
-        data.annotated_images.forEach((base64, idx) => {
-          const img = document.createElement('img');
-          img.src = 'data:image/jpeg;base64,' + base64;
-          img.alt = `Annotated Image ${idx + 1}`;
-          img.className = 'img-preview';
-          annotatedImagesDiv.appendChild(img);
-        });
+        const formData = new FormData();
+        for (const file of imagesInput.files) {
+          formData.append('images', file);
+        }
 
-        // Match report
-        data.match_report.forEach((row) => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${row['Face ID (Image)']}</td>
-            <td>${row['Matched With (Image)']}</td>
-            <td>${parseFloat(row['Distance']).toFixed(4)}</td>
-            <td>${row['Match']}</td>
-          `;
-          matchReportTableBody.appendChild(tr);
-        });
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            body: formData
+          });
 
-        // CSV Download
-        resultsDiv.classList.remove('d-none');
-        downloadCSVBtn.onclick = () => {
-          const blob = new Blob([data.csv_report], { type: 'text/csv;charset=utf-8;' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-          a.href = url;
-          a.download = `face_match_report_${timestamp}.csv`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        };
-      } catch (err) {
-        errorMsgDiv.textContent = 'Error: ' + err.message;
-        errorMsgDiv.classList.remove('d-none');
-      } finally {
-        submitBtn.disabled = false;
-        loadingDiv.classList.add('d-none');
-      }
-    });
-  </script>
-</body>
+          if (!response.ok) {
+            throw new Error('Server error: ' + response.statusText);
+          }
+
+          const data = await response.json();
+
+          data.annotated_images.forEach((base64, idx) => {
+            const img = document.createElement('img');
+            img.src = 'data:image/jpeg;base64,' + base64;
+            img.alt = `Annotated Image ${idx + 1}`;
+            img.className = 'img-preview';
+            annotatedImagesDiv.appendChild(img);
+          });
+
+          data.match_report.forEach((row) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${row['Face ID (Image)']}</td>
+              <td>${row['Matched With (Image)']}</td>
+              <td>${row['Match']}</td>
+            `;
+            matchReportTableBody.appendChild(tr);
+          });
+
+          resultsDiv.classList.remove('d-none');
+          downloadCSVBtn.onclick = () => {
+            const blob = new Blob([data.csv_report], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            a.href = url;
+            a.download = `face_match_report_${timestamp}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          };
+        } catch (err) {
+          errorMsgDiv.textContent = 'Error: ' + err.message;
+          errorMsgDiv.classList.remove('d-none');
+        } finally {
+          submitBtn.disabled = false;
+          loadingDiv.classList.add('d-none');
+        }
+      });
+    </script>
+  </body>
 </html>
